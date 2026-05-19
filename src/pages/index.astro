@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+import { projects } from "../data/projects";
+
+const recentProject = projects.find((project) => project.name === "BackPing");
+---
+
+<BaseLayout image="/images/kanchenjunga-hero.jpg">
+  <article class="home-page">
+    <section class="simple-hero">
+      <div class="profile-heading">
+        <h1>{profile.name}</h1>
+        <img src="/images/sitaram-avatar.jpg" width="480" height="480" alt="Sitaram Shelke" />
+      </div>
+      <p class="role-title">{profile.headline}</p>
+      <p>{profile.summary}</p>
+      <nav class="home-socials" aria-label="Social links">
+        {
+          profile.socials.map((social) => (
+            <a
+              href={social.href}
+              target={social.href.startsWith("http") ? "_blank" : undefined}
+              rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            >
+              {social.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="home-actions">
+        <a class="button dark" href={profile.resumeUrl} target="_blank" rel="noopener noreferrer">Resume</a>
+        <a class="button quiet" href="/links.html">Archive</a>
+      </div>
+    </section>
+
+    {
+      recentProject && (
+        <section class="recent-project" aria-labelledby="recent-project-title">
+          <div>
+            <p class="section-kicker">Recent project</p>
+            <h2 id="recent-project-title">
+              <a href={recentProject.siteHref} target="_blank" rel="noopener noreferrer">
+                {recentProject.name}
+              </a>
+            </h2>
+            <p>{recentProject.description}</p>
+          </div>
+          <div class="recent-project-actions">
+            <a class="button dark" href={recentProject.siteHref} target="_blank" rel="noopener noreferrer">
+              View project
+            </a>
+            <a class="button quiet" href={recentProject.href} target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          </div>
+        </section>
+      )
+    }
+
+    <figure class="mountain-figure">
+      <img
+        src="/images/kanchenjunga-hero.jpg"
+        width="2400"
+        height="900"
+        loading="lazy"
+        decoding="async"
+        alt="Kanchenjunga viewed from Dzongri top"
+      />
+      <figcaption>
+        Kanchenjunga viewed from Dzongri top. Photographed by me in March 2026.
+      </figcaption>
+    </figure>
+  </article>
+</BaseLayout>

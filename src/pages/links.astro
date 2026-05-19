@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const archiveLinks = [
+  {
+    label: "Blog archive",
+    href: "/blog.html",
+    description: "Older posts on Go, PostgreSQL, GSoC, Android, and open-source learning."
+  },
+  {
+    label: "Projects",
+    href: "/projects.html",
+    description: "Selected tools, systems experiments, GSoC work, and older side projects."
+  },
+  {
+    label: "GSoC16",
+    href: "https://sitaramshelke.me/gsoc16/",
+    description: "Google Summer of Code work around Performance Co-Pilot."
+  }
+];
+---
+
+<BaseLayout title="Archive" description="Older writing, projects, and archive pages for Sitaram Shelke." image="/images/kanchenjunga.jpg">
+  <section class="page-hero compact links-hero">
+    <p class="section-kicker">Archive</p>
+    <h1>Older writing and projects</h1>
+    <p>
+      A small collection of posts, projects, GSoC notes, and long-lived pages
+      from the previous site.
+    </p>
+  </section>
+
+  <section class="section link-groups archive-only">
+    <div class="link-directory">
+      {
+        archiveLinks.map((link) => (
+          <a
+            class="directory-card"
+            href={link.href}
+            target={link.href.startsWith("http") ? "_blank" : undefined}
+            rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+          >
+            <span>{link.label}</span>
+            <p>{link.description}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

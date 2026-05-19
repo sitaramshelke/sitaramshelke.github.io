@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { projects } from "../data/projects";
+
+const featured = projects.filter((project) => project.featured);
+const others = projects.filter((project) => !project.featured);
+---
+
+<BaseLayout title="Projects" description="Selected projects by Sitaram Shelke.">
+  <section class="page-hero compact">
+    <p class="section-kicker">Projects</p>
+    <h1>Tools, experiments, and production-minded side quests.</h1>
+    <p>
+      A mix of recent systems tooling, open-source experiments, and older work
+      from the path that got me here.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="project-grid">
+      {
+        featured.map((project) => (
+          <article class="project-card">
+            <p class="card-meta">{project.meta}</p>
+            <h2><a href={project.href}>{project.name}</a></h2>
+            <p>{project.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">Archive</p>
+        <h2>Earlier work</h2>
+      </div>
+    </div>
+    <div class="simple-list">
+      {
+        others.map((project) => (
+          <article>
+            <p class="card-meta">{project.meta}</p>
+            <h3><a href={project.href}>{project.name}</a></h3>
+            <p>{project.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

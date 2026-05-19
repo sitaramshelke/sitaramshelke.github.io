@@ -1,0 +1,145 @@
+---
+import "../styles/global.css";
+import { profile } from "../data/profile";
+import { Moon, Sun } from "@lucide/astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = profile.name,
+  description = profile.summary,
+  image = "/images/kanchenjunga-hero.jpg"
+} = Astro.props;
+
+const pageTitle = title === profile.name ? title : `${title} | ${profile.name}`;
+const pathname = Astro.url.pathname;
+const canonicalPath = pathname === "/index.html" ? "/" : pathname;
+const canonicalUrl = new URL(canonicalPath, Astro.site);
+
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "Archive", href: "/links.html" }
+];
+
+function isActive(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname.endsWith(href);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content={profile.name} />
+    <meta name="description" content={description} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#101820" />
+    <script is:inline>
+      (() => {
+        const key = "sitaram-theme";
+        const root = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : null;
+
+        if (theme) root.dataset.theme = theme;
+        root.style.colorScheme = theme || systemTheme;
+      })();
+    </script>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl.href} />
+    <link rel="alternate" type="application/rss+xml" title={`${profile.name} feed`} href="/atom.xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:image" content={new URL(image, Astro.site).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site).href} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-controls">
+        <nav class="site-nav" aria-label="Primary navigation">
+          {
+            navItems.map((item) => (
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle color theme">
+          <Moon class="theme-icon theme-icon-moon" size={20} strokeWidth={2.25} aria-hidden="true" />
+          <Sun class="theme-icon theme-icon-sun" size={20} strokeWidth={2.25} aria-hidden="true" />
+          <span class="visually-hidden" data-theme-toggle-label>Toggle color theme</span>
+        </button>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>Built with Astro and GitHub</p>
+    </footer>
+    <script is:inline>
+      (() => {
+        const key = "sitaram-theme";
+        const root = document.documentElement;
+        const button = document.querySelector("[data-theme-toggle]");
+        const label = document.querySelector("[data-theme-toggle-label]");
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+        const getSavedTheme = () => {
+          const value = localStorage.getItem(key);
+          return value === "dark" || value === "light" ? value : null;
+        };
+
+        const getTheme = () => getSavedTheme() || (media.matches ? "dark" : "light");
+
+        const sync = () => {
+          const theme = getTheme();
+          const actionLabel = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+          root.style.colorScheme = theme;
+          if (metaTheme) metaTheme.setAttribute("content", theme === "dark" ? "#0f1518" : "#f7faf8");
+          if (label) label.textContent = actionLabel;
+          if (button) {
+            button.dataset.activeTheme = theme;
+            button.setAttribute("aria-label", actionLabel);
+            button.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+            button.setAttribute("title", actionLabel);
+          }
+        };
+
+        button?.addEventListener("click", () => {
+          const nextTheme = getTheme() === "dark" ? "light" : "dark";
+          localStorage.setItem(key, nextTheme);
+          root.dataset.theme = nextTheme;
+          sync();
+        });
+
+        media.addEventListener("change", () => {
+          if (!getSavedTheme()) sync();
+        });
+
+        sync();
+      })();
+    </script>
+  </body>
+</html>

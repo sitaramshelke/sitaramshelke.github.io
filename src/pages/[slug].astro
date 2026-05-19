@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  formatDate,
+  getExcerpt,
+  getPostDate,
+  getPostSlug,
+  getPostTags,
+  sortPostsByDate
+} from "../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: getPostSlug(post) },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const allPosts = sortPostsByDate(await getCollection("blog"));
+const currentIndex = allPosts.findIndex((entry) => entry.id === post.id);
+const previous = allPosts[currentIndex + 1];
+const next = allPosts[currentIndex - 1];
+---
+
+<BaseLayout title={post.data.title} description={getExcerpt(post)}>
+  <article class="post-page">
+    <header class="post-header">
+      <a class="back-link" href="/blog.html">Back to archive</a>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <time datetime={getPostDate(post).toISOString()}>{formatDate(getPostDate(post))}</time>
+        <div class="tag-list">
+          {getPostTags(post).map((tag) => <span>{tag}</span>)}
+        </div>
+      </div>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <nav class="post-nav" aria-label="Post navigation">
+      {previous ? <a href={`/${getPostSlug(previous)}.html`}>Older: {previous.data.title}</a> : <span></span>}
+      {next ? <a href={`/${getPostSlug(next)}.html`}>Newer: {next.data.title}</a> : <span></span>}
+    </nav>
+  </article>
+</BaseLayout>

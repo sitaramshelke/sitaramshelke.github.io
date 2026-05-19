@@ -1,5 +1,8 @@
 .DS_Store
 _site/
+dist/
+.astro/
+node_modules/
 .bundle/
 .sass-cache/
 Gemfile.lock

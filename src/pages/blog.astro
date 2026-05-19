@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  formatDate,
+  getExcerpt,
+  getPostDate,
+  getPostSlug,
+  getPostTags,
+  sortPostsByDate
+} from "../lib/posts";
+
+const posts = sortPostsByDate(await getCollection("blog"));
+---
+
+<BaseLayout title="Blog" description="Writing archive by Sitaram Shelke.">
+  <section class="page-hero compact">
+    <p class="section-kicker">Blog</p>
+    <h1>Notes from the archive.</h1>
+    <p>
+      Older posts from learning, open source, GSoC, Go, PostgreSQL, Android,
+      and experiments along the way.
+    </p>
+  </section>
+
+  <section class="section archive-section">
+    <div class="post-list archive">
+      {
+        posts.map((post) => (
+          <article class="post-row">
+            <time datetime={getPostDate(post).toISOString()}>{formatDate(getPostDate(post))}</time>
+            <div>
+              <h2><a href={`/${getPostSlug(post)}.html`}>{post.data.title}</a></h2>
+              <p>{getExcerpt(post)}</p>
+              <div class="tag-list">
+                {getPostTags(post).map((tag) => <span>{tag}</span>)}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
