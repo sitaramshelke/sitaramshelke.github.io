@@ -6,7 +6,7 @@ export const profile = {
   summary:
     "I work on reliability, observability, infrastructure automation, and production systems.",
   email: "sitaramshelke@gmail.com",
-  resumeUrl: "https://bit.ly/383chvK",
+  resumeUrl: "/resume/sitaram-shelke-resume.pdf",
   calendlyUrl: "https://calendly.com/sitaramshelke",
   socials: [
     { label: "GitHub", href: "https://github.com/sitaramshelke" },
